@@ -19,6 +19,7 @@ class CreateTableAuthor extends Migration
             $table->string('real_name')->nullable()->comment('真实姓名');
             $table->string('profile', 2000)->comment('简介');
             $table->timestamps();
+            $table->softDeletes();
         });
 
         DB::statement("alter table author comment '作者信息'");
