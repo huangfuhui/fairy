@@ -50,8 +50,8 @@ return [
             'charset' => 'utf8mb4',
             'collation' => 'utf8mb4_unicode_ci',
             'prefix' => 'fairy_',
-            'strict' => true,
-            'engine' => null,
+            'strict' => false,
+            'engine' => 'innodb',
         ],
 
         'pgsql' => [
