@@ -12,6 +12,7 @@ namespace App\Constants;
 
 final class BookTypeConstant
 {
+    const OTHER     = 0;
     const FANTASY   = 1;
     const GOD       = 2;
     const SWORDSMAN = 3;
@@ -22,6 +23,7 @@ final class BookTypeConstant
     const GAME      = 8;
 
     const BOOK_TYPE = [
+        self::OTHER     => '其它',
         self::FANTASY   => '玄幻',
         self::GOD       => '修真',
         self::SWORDSMAN => '武侠',
