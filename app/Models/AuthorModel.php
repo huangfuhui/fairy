@@ -18,7 +18,7 @@ class AuthorModel
      * @param string $name
      * @param string $profile
      * @param string $realName
-     * @return bool
+     * @return int
      */
     public static function initAuthor($name, $profile = '', $realName = '')
     {
@@ -26,8 +26,13 @@ class AuthorModel
         $author->name      = $name;
         $author->real_name = $realName;
         $author->profile   = $profile;
+        $res               = $author->save();
 
-        return $author->save();
+        if ($res) {
+            return $author->id;
+        } else {
+            return 0;
+        }
     }
 
     /**
@@ -38,5 +43,25 @@ class AuthorModel
     public static function getAuthorName($id)
     {
         return Author::where('id', $id)->value('name');
+    }
+
+    /**
+     * 根据名字获取作者ID
+     * @param string $name
+     * @return mixed
+     */
+    public static function getAuthorId($name)
+    {
+        return Author::where('name', $name)->value('id');
+    }
+
+    /**
+     * 判断作者是否存在
+     * @param string $name
+     * @return bool
+     */
+    public static function existAuthor($name)
+    {
+        return Author::where('name', $name)->exists();
     }
 }

@@ -19,21 +19,26 @@ class BookModel
      * @param int $authorId
      * @param int $typeId
      * @param string $profile
-     * @param string $coverId
+     * @param string $cover
      * @param int $status
-     * @return bool
+     * @return int
      */
-    public static function initBook($name, $authorId, $typeId, $profile = '', $coverId = '', $status = 0)
+    public static function initBook($name, $authorId, $typeId, $profile = '', $cover = '', $status = 0)
     {
         $book            = new Book();
         $book->name      = $name;
         $book->author_id = $authorId;
         $book->type_id   = $typeId;
         $book->profile   = $profile;
-        $book->cover_id  = $coverId;
+        $book->cover     = $cover;
         $book->status    = $status;
+        $res             = $book->save();
 
-        return $book->save();
+        if ($res) {
+            return $book->id;
+        } else {
+            return 0;
+        }
     }
 
     /**
@@ -44,5 +49,16 @@ class BookModel
     public static function getBook($id)
     {
         return Book::find($id);
+    }
+
+    /**
+     * 判断书籍是否存在
+     * @param string $name
+     * @param int $authorId
+     * @return bool
+     */
+    public static function existBook($name, $authorId)
+    {
+        return Book::where('name', $name)->where('author_id', $authorId)->exists();
     }
 }
