@@ -14,3 +14,7 @@
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::group(['namespace' => 'Mobile'], function () {
+    include_once 'mobile.php';
+});
