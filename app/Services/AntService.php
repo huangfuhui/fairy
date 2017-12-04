@@ -13,6 +13,9 @@ use App\Constants\BookConstant;
 use App\Constants\BookTypeConstant;
 use App\Entities\Book;
 use App\Entities\Chapter;
+use App\Events\Ant\Content;
+use App\Events\Ant\Chapter as ChapterObj;
+use App\Events\AntEvent;
 use App\Models\AuthorModel;
 use App\Models\BookModel;
 use App\Models\ChapterModel;
@@ -88,9 +91,12 @@ class AntService
             $book->id = BookModel::initBook($book->name, $book->author_id, $book->type_id, $book->profile, $book->cover, $book->status);
         }
 
-        // TODO:异步初始化书籍章节信息
+        // 异步初始化书籍章节信息
         if ($book->id) {
-            $this->initChapter($book->id, $bookUrl);
+            $chapterObj = new ChapterObj();
+            $chapterObj->setBookId($book->id);
+            $chapterObj->setRequestUrl($bookUrl);
+            event(new AntEvent($chapterObj));
         }
 
         return $book;
@@ -129,11 +135,15 @@ class AntService
         // 初始化章节信息
         $chapterList = [];
         $createTime  = date('Y-m-d H:i:s', time());
+        $contentObj  = new Content();
+        $contentObj->setBookId($bookId);
         foreach ($chapters[2] as $key => $value) {
             array_push($chapterList, ['book_id' => $bookId, 'name' => $value, 'created_at' => $createTime, 'updated_at' => $createTime]);
 
-            // TODO:异步拉取章节内容
-            $this->initContent($bookId, $value, $chapters[1][$key]);
+            // 异步拉取章节内容
+            $contentObj->setChapterName($value);
+            $contentObj->setRequestUrl($chapters[1][$key]);
+            event(new AntEvent($contentObj));
         }
 
         return Chapter::insert($chapterList);
