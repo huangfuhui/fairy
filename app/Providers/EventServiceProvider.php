@@ -14,7 +14,8 @@ class EventServiceProvider extends ServiceProvider
      */
     protected $listen = [
         'App\Events\AntEvent' => [
-            'App\Listeners\AntListener',
+            'App\Listeners\BookInitLister',
+            'App\Listeners\BookUpdateLister',
         ],
     ];
 
