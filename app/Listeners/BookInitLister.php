@@ -8,6 +8,7 @@ use App\Events\AntEvent;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Ant;
+use Illuminate\Support\Facades\Log;
 
 class BookInitLister implements ShouldQueue
 {
@@ -40,25 +41,40 @@ class BookInitLister implements ShouldQueue
             $chapterName = $ant->getChapterName();
             echo "[第 $attempts 次]开始初始化书籍章节内容.   book_id: $bookId, chapter_name: $chapterName" . PHP_EOL;
             $res = Ant::initContent($bookId, $chapterName, $requestUrl);
-            $res ? $msg = "[第 $attempts 次]初始化成功." : $msg = "[第 $attempts 次]初始化失败. http_code：" . Ant::getErrMsg();
+            $res ? $msg = "[第 $attempts 次]初始化成功." : $msg = "[第 $attempts 次]初始化失败. http_err：" . Ant::getErrMsg();
             echo $msg . PHP_EOL;
 
             if (!$res) {
-                $this->release($attempts);
+                $wait = $attempts * random_int(1, 10);
+                echo "等待 $wait 秒后重试" . PHP_EOL;
+
+                $this->release($wait);
             }
 
             return false;
         } elseif ($ant instanceof Chapter) {
             echo "[第 $attempts 次]开始初始化书籍章节信息.   book_id: $bookId" . PHP_EOL;
             $res = Ant::initChapter($bookId, $requestUrl);
-            $res ? $msg = "[第 $attempts 次]初始化成功." : $msg = "[第 $attempts 次]初始化失败. http_code：" . Ant::getErrMsg();
+            $res ? $msg = "[第 $attempts 次]初始化成功." : $msg = "[第 $attempts 次]初始化失败. http_err：" . Ant::getErrMsg();
             echo $msg . PHP_EOL;
 
             if (!$res) {
-                $this->release($attempts);
+                $wait = $attempts * random_int(1, 10);
+                echo "等待 $wait 秒后重试" . PHP_EOL;
+
+                $this->release($wait);
             }
 
             return false;
         }
+    }
+
+    /**
+     * @param AntEvent $event
+     * @param          $exception
+     */
+    public function failed(AntEvent $event, $exception)
+    {
+        Log::info('任务异常：' . $exception->getMessage());
     }
 }
