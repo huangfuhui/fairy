@@ -38,6 +38,8 @@ class BookInitLister implements ShouldQueue
         $attempts   = $this->attempts();
 
         if ($ant instanceof Content) {
+            usleep($attempts * 200000);
+
             $chapterName = $ant->getChapterName();
             echo "[第 $attempts 次]开始初始化书籍章节内容.   book_id: $bookId, chapter_name: $chapterName" . PHP_EOL;
             $res = Ant::initContent($bookId, $chapterName, $requestUrl);
