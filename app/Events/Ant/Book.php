@@ -9,9 +9,7 @@
 
 namespace App\Events\Ant;
 
-use App\Events\AntEvent;
-
-class Book extends AntEvent
+class Book extends Ant
 {
 
 }

@@ -169,7 +169,10 @@ class AntService
         $contentObj  = new Content();
         $contentObj->setBookId($bookId);
         foreach ($chapters[2] as $key => $value) {
-            array_push($chapterList, ['book_id' => $bookId, 'name' => $value, 'created_at' => $createTime, 'updated_at' => $createTime]);
+            $temp = ['book_id' => $bookId, 'name' => $value, 'created_at' => $createTime, 'updated_at' => $createTime];
+            if (!in_array($temp, $chapterList)) {
+                array_push($chapterList, $temp);
+            }
         }
 
         ChapterModel::deleteAll($bookId);
