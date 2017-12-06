@@ -133,7 +133,7 @@ class AntService
      */
     public function initChapter($bookId, $bookUrl)
     {
-        $book = BookModel::getBook($bookId)->toArray();
+        $book = BookModel::getBook($bookId);
         if (empty($book) || empty($bookUrl)) {
             return false;
         }

@@ -45,7 +45,8 @@ class BookInitLister implements ShouldQueue
             echo $msg . PHP_EOL;
 
             if (!$res) {
-                $wait = $attempts * random_int(1, 10);
+                $wait = $attempts * random_int(10, 50);
+                $wait < 300 ? null : $wait = 300;
                 echo "等待 $wait 秒后重试" . PHP_EOL;
 
                 $this->release($wait);
