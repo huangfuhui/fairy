@@ -23,6 +23,7 @@ use App\Models\ContentModel;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\TransferException;
 use Illuminate\Support\Facades\Storage;
+use Exception;
 
 class AntService
 {
@@ -86,23 +87,28 @@ class AntService
             $book->author_id = AuthorModel::initAuthor($book->author);
         }
 
-        // 保存封面
-        $cover     = file_get_contents($book->cover);
-        $coverName = md5(config('app.name') . $book->name . $book->author) . '.' . config('ant.cover_suffix');
-        if (Storage::exists(config('ant.cover_dir') . $coverName) || Storage::put(config('ant.cover_dir') . $coverName, $cover)) {
-            $book->cover = $coverName;
-        } else {
-            $book->cover = '';
-        }
-
-        // 解析书籍类型
-        $book->type_id = $this->parseType($book->type);
-
-        // 解析书籍状态
-        $book->status = $this->parseStatus($book->status);
-
         // 初始化书籍信息
         if (!BookModel::existBook($book->name, $book->author_id)) {
+
+            // 保存封面
+            try {
+                $cover     = file_get_contents($book->cover);
+                $coverName = md5(config('app.name') . $book->name . $book->author) . '.' . config('ant.cover_suffix');
+                if (Storage::exists(config('ant.cover_dir') . $coverName) || Storage::put(config('ant.cover_dir') . $coverName, $cover)) {
+                    $book->cover = $coverName;
+                } else {
+                    $book->cover = '';
+                }
+            } catch (Exception $exception) {
+                $book->cover = '';
+            }
+
+            // 解析书籍类型
+            $book->type_id = $this->parseType($book->type);
+
+            // 解析书籍状态
+            $book->status = $this->parseStatus($book->status);
+
             $book->id = BookModel::initBook($book->name, $book->author_id, $book->type_id, $book->profile, $book->cover, $book->status);
         }
 
@@ -171,7 +177,9 @@ class AntService
             event(new AntEvent($contentObj));
         }
 
-        return Chapter::insert($chapterList);
+        $res = Chapter::where('book_id', $bookId)->delete() && Chapter::insert($chapterList);
+
+        return $res;
     }
 
     /**
