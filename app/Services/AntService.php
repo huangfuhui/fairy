@@ -170,14 +170,19 @@ class AntService
         $contentObj->setBookId($bookId);
         foreach ($chapters[2] as $key => $value) {
             array_push($chapterList, ['book_id' => $bookId, 'name' => $value, 'created_at' => $createTime, 'updated_at' => $createTime]);
-
-            // 异步拉取章节内容
-            $contentObj->setChapterName($value);
-            $contentObj->setRequestUrl($chapters[1][$key]);
-            event(new AntEvent($contentObj));
         }
 
-        $res = Chapter::where('book_id', $bookId)->delete() && Chapter::insert($chapterList);
+        ChapterModel::deleteAll($bookId);
+        $res = Chapter::insert($chapterList);
+
+        if ($res) {
+            foreach ($chapters[2] as $key => $value) {
+                // 异步拉取章节内容
+                $contentObj->setChapterName($value);
+                $contentObj->setRequestUrl($chapters[1][$key]);
+                event(new AntEvent($contentObj));
+            }
+        }
 
         return $res;
     }
@@ -193,9 +198,9 @@ class AntService
      */
     public function initContent($bookId, $chapterName, $chapterUrl)
     {
-        $book        = BookModel::getBook($bookId)->toArray();
-        $chapterName = ChapterModel::getByName($bookId, $chapterName);
-        if (empty($book) || empty($chapterName) || empty($chapterUrl)) {
+        $book    = BookModel::getBook($bookId)->toArray();
+        $chapter = ChapterModel::getByName($bookId, $chapterName)->toArray();
+        if (empty($book) || empty($chapter) || empty($chapterUrl)) {
             return false;
         }
 
@@ -228,7 +233,7 @@ class AntService
         if (ContentModel::existContent($contentId)) {
             $res = ContentModel::update($contentId, $content);
         } else {
-            $res = ContentModel::add($this->generateContentId($bookId, $chapterName), $content);
+            $res = ContentModel::add($contentId, $content) && ChapterModel::updateContentId($chapter['id'], $contentId);
         }
 
         if ($res) {
