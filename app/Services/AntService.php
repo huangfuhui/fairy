@@ -21,10 +21,15 @@ use App\Models\BookModel;
 use App\Models\ChapterModel;
 use App\Models\ContentModel;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\TransferException;
 use Illuminate\Support\Facades\Storage;
 
 class AntService
 {
+    private static $httpCode = 0;
+
+    private static $errMsg = '';
+
     private $client = null;
 
     public function __construct(Client $client)
@@ -36,6 +41,7 @@ class AntService
      * 初始化书籍
      *
      * @param string $bookUrl
+     *
      * @return Book|null
      */
     public function initBook($bookUrl = '')
@@ -45,8 +51,17 @@ class AntService
         }
 
         // 发起请求
-        $response = $this->client->request('GET', $bookUrl);
-        if ($response->getStatusCode() != 200) {
+        try {
+            $response = $this->client->request('GET', $bookUrl);
+            if ($response->getStatusCode() != 200) {
+                $this->setHttpCode($response->getStatusCode());
+
+                return null;
+            }
+        } catch (TransferException $exception) {
+            empty($response) || $this->setHttpCode($response->getStatusCode());
+            $this->setErrMsg($exception->getMessage());
+
             return null;
         }
 
@@ -107,6 +122,7 @@ class AntService
      *
      * @param int    $bookId
      * @param string $bookUrl
+     *
      * @return bool
      */
     public function initChapter($bookId, $bookUrl)
@@ -117,8 +133,17 @@ class AntService
         }
 
         // 发起请求
-        $response = $this->client->request('GET', $bookUrl);
-        if ($response->getStatusCode() != 200) {
+        try {
+            $response = $this->client->request('GET', $bookUrl);
+            if ($response->getStatusCode() != 200) {
+                $this->setHttpCode($response->getStatusCode());
+
+                return false;
+            }
+        } catch (TransferException $exception) {
+            empty($response) || $this->setHttpCode($response->getStatusCode());
+            $this->setErrMsg($exception->getMessage());
+
             return false;
         }
 
@@ -155,6 +180,7 @@ class AntService
      * @param int    $bookId
      * @param string $chapterName
      * @param string $chapterUrl
+     *
      * @return bool
      */
     public function initContent($bookId, $chapterName, $chapterUrl)
@@ -166,10 +192,20 @@ class AntService
         }
 
         // 发起请求
-        $response = $this->client->request('GET', $chapterUrl);
-        if ($response->getStatusCode() != 200) {
+        try {
+            $response = $this->client->request('GET', $chapterUrl);
+            if ($response->getStatusCode() != 200) {
+                $this->setHttpCode($response->getStatusCode());
+
+                return false;
+            }
+        } catch (TransferException $exception) {
+            empty($response) || $this->setHttpCode($response->getStatusCode());
+            $this->setErrMsg($exception->getMessage());
+
             return false;
         }
+
 
         // 获取返回的内容
         $body = $response->getBody();
@@ -199,6 +235,7 @@ class AntService
      *
      * @param string $content
      * @param string $pattern
+     *
      * @return string
      */
     private function paresContent($content, $pattern)
@@ -216,6 +253,7 @@ class AntService
      * 解析书籍类型
      *
      * @param string $typeString
+     *
      * @return int
      */
     private function parseType($typeString)
@@ -235,6 +273,7 @@ class AntService
      * 解析书籍状态
      *
      * @param string $statusString
+     *
      * @return int
      */
     private function parseStatus($statusString)
@@ -249,10 +288,43 @@ class AntService
      *
      * @param int    $bookId
      * @param string $chapterName
+     *
      * @return string
      */
     private function generateContentId($bookId, $chapterName)
     {
         return md5($bookId . '-' . $chapterName);
+    }
+
+    /**
+     * @return int
+     */
+    public static function getHttpCode(): int
+    {
+        return self::$httpCode;
+    }
+
+    /**
+     * @param int $httpCode
+     */
+    public static function setHttpCode(int $httpCode)
+    {
+        self::$httpCode = $httpCode;
+    }
+
+    /**
+     * @return string
+     */
+    public static function getErrMsg(): string
+    {
+        return self::$errMsg;
+    }
+
+    /**
+     * @param string $errMsg
+     */
+    public static function setErrMsg(string $errMsg)
+    {
+        self::$errMsg = $errMsg;
     }
 }
