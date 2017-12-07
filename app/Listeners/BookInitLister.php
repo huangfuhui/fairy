@@ -2,6 +2,7 @@
 
 namespace App\Listeners;
 
+use App\Constants\AntConstant;
 use App\Events\Ant\Chapter;
 use App\Events\Ant\Content;
 use App\Events\AntEvent;
@@ -38,7 +39,7 @@ class BookInitLister implements ShouldQueue
         $attempts   = $this->attempts();
 
         if ($ant instanceof Content) {
-            usleep($attempts * 200000);
+            usleep($attempts * AntConstant::U_SLEEP);
 
             $chapterName = $ant->getChapterName();
             echo "[第 $attempts 次]开始初始化书籍章节内容.   book_id: $bookId, chapter_name: $chapterName" . PHP_EOL;
@@ -48,7 +49,7 @@ class BookInitLister implements ShouldQueue
 
             if (!$res) {
                 $wait = $attempts * random_int(10, 50);
-                $wait < 300 ? null : $wait = 300;
+                $wait < AntConstant::WAIT_UPPER_LIMIT ? null : $wait = AntConstant::WAIT_UPPER_LIMIT;
                 echo "等待 $wait 秒后重试" . PHP_EOL;
 
                 $this->release($wait);
@@ -63,7 +64,7 @@ class BookInitLister implements ShouldQueue
 
             if (!$res) {
                 $wait = $attempts * random_int(1, 10);
-                $wait < 300 ? null : $wait = 300;
+                $wait < AntConstant::WAIT_UPPER_LIMIT ? null : $wait = AntConstant::WAIT_UPPER_LIMIT;
                 echo "等待 $wait 秒后重试" . PHP_EOL;
 
                 $this->release($wait);

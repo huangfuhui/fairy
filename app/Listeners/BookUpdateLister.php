@@ -2,6 +2,7 @@
 
 namespace App\Listeners;
 
+use App\Constants\AntConstant;
 use App\Events\Ant\Book;
 use App\Events\AntEvent;
 use Illuminate\Queue\InteractsWithQueue;
@@ -44,7 +45,7 @@ class BookUpdateLister implements ShouldQueue
 
             if (!$res) {
                 $wait = $attempts * random_int(1, 10);
-                $wait < 300 ? null : $wait = 300;
+                $wait < AntConstant::WAIT_UPPER_LIMIT ? null : $wait = AntConstant::WAIT_UPPER_LIMIT;
                 echo "等待 $wait 秒后重试" . PHP_EOL;
 
                 $this->release($wait);
