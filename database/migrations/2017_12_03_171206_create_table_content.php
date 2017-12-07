@@ -18,9 +18,11 @@ class CreateTableContent extends Migration
             $table->string('content_id')->comment('内容ID');
             $table->text('content')->comment('内容');
             $table->timestamps();
+
+            $table->index('content_id');
         });
 
-        DB::statement("alter table content comment 'content'");
+        DB::statement("alter table content comment '章节内容'");
     }
 
     /**

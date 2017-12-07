@@ -19,6 +19,9 @@ class CreateTableChapter extends Migration
             $table->string('name')->comment('章节名');
             $table->string('content_id')->nullable()->comment('内容ID');
             $table->timestamps();
+
+            $table->index('id');
+            $table->index('book_id');
         });
 
         DB::statement("alter table chapter comment '章节信息'");
