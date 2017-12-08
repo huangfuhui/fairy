@@ -227,7 +227,6 @@ class AntService
             return false;
         }
 
-
         // 获取返回的内容
         $body = $response->getBody();
         // 进行UTF-8转码
@@ -251,9 +250,69 @@ class AntService
         }
     }
 
+    /**
+     * 更新书籍章节
+     *
+     * @param int $bookId
+     *
+     * @return bool
+     */
     public function updateChapter($bookId)
     {
+        $book       = BookModel::getBook($bookId);
+        $updateInfo = UpdateInfoModel::getByBookId($bookId);
 
+        if (empty($book) || BookConstant::END == $book->status || empty($updateInfo)) {
+            return false;
+        }
+
+        // 发起请求
+        try {
+            $response = $this->client->request('GET', $updateInfo->address);
+            if ($response->getStatusCode() != 200) {
+                $this->setHttpCode($response->getStatusCode());
+
+                return false;
+            }
+        } catch (TransferException $exception) {
+            empty($response) || $this->setHttpCode($response->getStatusCode());
+            $this->setErrMsg($exception->getMessage());
+
+            return false;
+        }
+
+        // 获取返回的内容
+        $body = $response->getBody();
+        // 进行UTF-8转码
+        $content = mb_convert_encoding($body->getContents(), 'UTF-8', 'GBK');
+
+        // 解析文本内容
+        $content  = trim($this->paresContent($content, config('ant.pattern.book.chapter_contents')));
+        $chapters = [];
+        preg_match_all(config('ant.pattern.book.chapter_list'), $content, $chapters);
+        $newChapterCount = count($chapters[1]);
+        $newAddChapters  = $newChapterCount - $updateInfo->update_tag;
+
+        if ($newAddChapters > 0) {
+            // 初始化章节信息，异步更新章节内容
+            $contentObj = new Content();
+            $contentObj->setBookId($bookId);
+            for ($i = $newAddChapters; $i > 0; $i--) {
+                $newChapter    = array_pop($chapters[2]);
+                $newChapterUrl = array_pop($chapters[1]);
+
+                ChapterModel::addChapter($bookId, $newChapter);
+
+                $contentObj->setChapterName($newChapter);
+                $contentObj->setRequestUrl($newChapterUrl);
+                event(new AntEvent($contentObj));
+            }
+
+            // 更新标志
+            UpdateInfoModel::updateTag($bookId, $newChapterCount);
+        }
+
+        return true;
     }
 
     /**

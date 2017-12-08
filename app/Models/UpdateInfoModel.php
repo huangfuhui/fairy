@@ -38,10 +38,23 @@ class UpdateInfoModel
      *
      * @param int $bookId
      *
-     * @return \Illuminate\Database\Eloquent\Collection|static[]
+     * @return \Illuminate\Database\Eloquent\Model|null|static
      */
     public static function getByBookId($bookId)
     {
-        return UpdateInfo::where('book_id', $bookId)->get();
+        return UpdateInfo::where('book_id', $bookId)->first();
+    }
+
+    /**
+     * 更新标志
+     *
+     * @param int    $bookId
+     * @param string $tag
+     *
+     * @return bool
+     */
+    public static function updateTag($bookId, $tag)
+    {
+        return UpdateInfo::where('book_id', $bookId)->update(['update_tag' => $tag]);
     }
 }

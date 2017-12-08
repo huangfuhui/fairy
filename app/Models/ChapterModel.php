@@ -62,4 +62,21 @@ class ChapterModel
     {
         return Chapter::where('id', $chapterId)->update(['content_id' => $contentId]);
     }
+
+    /**
+     * 添加章节信息
+     *
+     * @param int    $bookId
+     * @param string $name
+     *
+     * @return bool
+     */
+    public static function addChapter($bookId, $name)
+    {
+        $chapter          = new Chapter();
+        $chapter->book_id = $bookId;
+        $chapter->name    = $name;
+
+        return $chapter->save();
+    }
 }
