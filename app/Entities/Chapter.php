@@ -25,6 +25,8 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Entities\Chapter whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Entities\Chapter whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @property int $book_id 书籍ID
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Entities\Chapter whereBookId($value)
  */
 class Chapter extends Model
 {

@@ -20,6 +20,7 @@ use App\Models\AuthorModel;
 use App\Models\BookModel;
 use App\Models\ChapterModel;
 use App\Models\ContentModel;
+use App\Models\UpdateInfoModel;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\TransferException;
 use Illuminate\Support\Facades\Storage;
@@ -179,6 +180,10 @@ class AntService
         $res = Chapter::insert($chapterList);
 
         if ($res) {
+            // 记录更新标志
+            $chapterCount = count($chapterList);
+            UpdateInfoModel::add($bookId, $chapterCount, $bookUrl);
+
             foreach ($chapters[2] as $key => $value) {
                 // 异步拉取章节内容
                 $contentObj->setChapterName($value);
@@ -244,6 +249,11 @@ class AntService
         } else {
             return false;
         }
+    }
+
+    public function updateChapter($bookId)
+    {
+
     }
 
     /**
