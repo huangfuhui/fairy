@@ -21,11 +21,12 @@ trait ViewData
     /**
      * 添加视图数据
      *
-     * @param $data
+     * @param string $key
+     * @param mixed  $data
      */
-    public function addData($data)
+    public function addData($key, $data)
     {
-
+        isset($data) ? $this->viewData[$key] = $data : null;
     }
 
     /**
@@ -33,10 +34,16 @@ trait ViewData
      *
      * @param string $key
      * @param string $default
+     *
+     * @return mixed
      */
     public function getData($key, $default = '')
     {
-
+        if (isset($this->viewData[$key])) {
+            return $this->viewData[$key];
+        } else {
+            return $default;
+        }
     }
 
     /**
