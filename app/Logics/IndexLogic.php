@@ -7,7 +7,7 @@
  * @Email: huangfuhui@meimeifa.com
  */
 
-namespace App\Logics\mobile;
+namespace App\Logics;
 
 use App\Constants\BookTypeConstant;
 use App\Logics\AbstractLogic;
@@ -22,7 +22,7 @@ class IndexLogic extends AbstractLogic
     public function bookTypes()
     {
         $bookType = BookTypeConstant::BOOK_TYPE;
-        array_pop($bookType);
+        array_shift($bookType);
 
         return $bookType;
     }

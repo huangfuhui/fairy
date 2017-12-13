@@ -10,7 +10,7 @@
 namespace App\Http\Controllers\Mobile;
 
 use App\Http\Controllers\Controller;
-use App\Logics\mobile\IndexLogic;
+use App\Logics\IndexLogic;
 
 class IndexController extends Controller
 {
@@ -18,6 +18,10 @@ class IndexController extends Controller
     {
         $logic = new IndexLogic();
 
-        return view('mobile.index');
+        $bookTypes = $logic->bookTypes();
+
+        $this->addData('book_types', $bookTypes);
+
+        return view('mobile.index', $this->viewData());
     }
 }
