@@ -9,11 +9,12 @@
 
 return [
     'base_uri'     => 'http://www.biquge5200.com',
+    'search_uri'   => 'http://www.biquge5200.com/modules/article/search.php?searchkey=',
     'cover_dir'    => 'covers/',
     'cover_suffix' => 'jpg',
 
     'pattern' => [
-        'book' => [
+        'book'   => [
             'name'             => '[<meta property="og:title" content="(.*)"/>]',
             'author'           => '[<meta property="og:novel:author" content="(.*)"/>]',
             'profile'          => '[<meta property="og:description" content="(.*)"/>]',
@@ -23,6 +24,9 @@ return [
             'chapter_contents' => '[<dt>.*正文</dt>(.*)</dl>]s',
             'chapter_list'     => '[<dd><a href="(.*)">(.*)</a></dd>]',
             'content'          => '[<div id="content">(.*?)</div>]s',
+        ],
+        'search' => [
+            'result' => '[<tr>.*?<td class="odd"><a href="(.*)">.*?</a></td>.*?<td class="odd">(.*)</td>.*?</tr>]s',
         ],
     ],
 ];
