@@ -317,7 +317,34 @@ class AntService
 
     public function search($key)
     {
+        // 拼装搜索地址
+        $searchUrl = config('ant.search_uri') . trim($key);
 
+        // 发起请求
+        try {
+            $response = $this->client->request('GET', $searchUrl);
+            if ($response->getStatusCode() != 200) {
+                $this->setHttpCode($response->getStatusCode());
+
+                return null;
+            }
+        } catch (TransferException $exception) {
+            empty($response) || $this->setHttpCode($response->getStatusCode());
+            $this->setErrMsg($exception->getMessage());
+
+            return null;
+        }
+
+        // 获取返回的内容
+        $body = $response->getBody();
+        // 进行UTF-8转码
+        $content = mb_convert_encoding($body->getContents(), 'UTF-8', 'GBK');
+
+        // 解析搜索结果
+        $results = [];
+        preg_match_all(config('ant.pattern.search.result'), $content, $results);
+
+        // TODO:筛选结果，异步拉取未收录书籍
     }
 
     /**
