@@ -315,6 +315,11 @@ class AntService
         return true;
     }
 
+    public function search($key)
+    {
+
+    }
+
     /**
      * 解析文本内容
      *
