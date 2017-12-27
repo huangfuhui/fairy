@@ -326,13 +326,13 @@ class AntService
             if ($response->getStatusCode() != 200) {
                 $this->setHttpCode($response->getStatusCode());
 
-                return null;
+                return false;
             }
         } catch (TransferException $exception) {
             empty($response) || $this->setHttpCode($response->getStatusCode());
             $this->setErrMsg($exception->getMessage());
 
-            return null;
+            return false;
         }
 
         // 获取返回的内容
@@ -344,7 +344,94 @@ class AntService
         $results = [];
         preg_match_all(config('ant.pattern.search.result'), $content, $results);
 
-        // TODO:筛选结果，异步拉取未收录书籍
+        if (empty($results[0])) {
+            return false;
+        }
+
+        // 结果去重
+        $uniqueArr = array_unique($results[2]);
+        $repeatArr = array_diff_assoc($results[2], $uniqueArr);
+        foreach ($repeatArr as $key => $value) {
+            $repeatKey = array_keys($results[2], $value);
+            $latest    = [];
+            foreach ($repeatKey as $v) {
+                $url            = $results[1][$v];
+                $chapterContent = $this->getChapterListContent($url);
+                $chapterInfo    = $this->paresContent($chapterContent, config('ant.pattern.book.chapter_contents'));
+                $chapterList    = $this->paresChapter($chapterInfo);
+                $chapterCount   = count($chapterList);
+                $latest[$v]     = $chapterCount;
+            }
+            arsort($latest);
+            next($latest);
+            while (current($latest)) {
+                unset($results[0][key($latest)]);
+                unset($results[1][key($latest)]);
+                unset($results[2][key($latest)]);
+                unset($results[3][key($latest)]);
+                next($latest);
+            }
+            reset($latest);
+        }
+
+        // 筛选结果，拉取未收录书籍
+        foreach ($results[1] as $key => $value) {
+            $authorId = AuthorModel::getAuthorId($results[3][$key]);
+            if (empty($authorId) || !BookModel::existBook($results[2][$key], $authorId)) {
+                echo $results[2][$key] . '<br/>';
+                $this->initBook($value);
+            }
+        }
+    }
+
+    /**
+     * 拉取书籍章节列表文本内容
+     *
+     * @param string $url
+     *
+     * @return string
+     */
+    private function getChapterListContent($url)
+    {
+        // 发起请求
+        try {
+            $response = $this->client->request('GET', $url);
+            if ($response->getStatusCode() != 200) {
+                $this->setHttpCode($response->getStatusCode());
+
+                return '';
+            }
+        } catch (TransferException $exception) {
+            empty($response) || $this->setHttpCode($response->getStatusCode());
+            $this->setErrMsg($exception->getMessage());
+
+            return '';
+        }
+
+        // 获取返回的内容
+        $body = $response->getBody();
+        // 进行UTF-8转码
+        $content = mb_convert_encoding($body->getContents(), 'UTF-8', 'GBK');
+
+        return $content;
+    }
+
+    /**
+     * 解析章节列表信息
+     *
+     * @param string $content
+     *
+     * @return array
+     */
+    private function paresChapter($content)
+    {
+        $match = [];
+        $res   = preg_match_all(config('ant.pattern.book.chapter_list'), $content, $match);
+        if ($res) {
+            return $match[1];
+        } else {
+            return $match;
+        }
     }
 
     /**
