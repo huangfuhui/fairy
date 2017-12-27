@@ -26,7 +26,7 @@ return [
             'content'          => '[<div id="content">(.*?)</div>]s',
         ],
         'search' => [
-            'result' => '[<tr>.*?<td class="odd"><a href="(.*)">(.*)</a></td>.*?<td class="odd">(.*)</td>.*?</tr>]s',
+            'result' => '[<tr>.*?<td class="odd"><a href="(.*?)">(.*?)</a></td>.*?<td class="odd">(.*?)</td>.*?</tr>]s',
         ],
     ],
 ];
