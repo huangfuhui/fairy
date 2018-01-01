@@ -22,8 +22,8 @@ class IndexController extends Controller
      */
     public function index()
     {
-        $logic     = new IndexLogic();
-        $bookTypes = $logic->bookTypes();
+        $indexLogic = new IndexLogic();
+        $bookTypes  = $indexLogic->bookTypes();
         $this->addData('book_types', $bookTypes);
 
         return view('mobile.index', $this->viewData());
@@ -36,12 +36,12 @@ class IndexController extends Controller
      */
     public function type()
     {
-        $logic     = new IndexLogic();
-        $bookTypes = $logic->bookTypes();
+        $indexLogic = new IndexLogic();
+        $bookTypes  = $indexLogic->bookTypes();
         $this->addData('book_types', $bookTypes);
 
-        $logic    = new BookLogic();
-        $bookList = $logic->getBookListByType();
+        $bookLogic = new BookLogic();
+        $bookList  = $bookLogic->getBookListByType();
         $this->setPage($bookList);
 
         return view('mobile.type', $this->viewData());
