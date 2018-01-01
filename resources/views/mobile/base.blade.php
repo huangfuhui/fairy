@@ -26,7 +26,7 @@
 @section('head')
     <div class="header head-nav">
         <span><img class="logo" src="{{ asset('img/logo.png') }}"/></span>
-        <span><a class="btn-green home" href="#">首页</a></span>
+        <span><a class="btn-green home" href="{{ route('mobile_index') }}">首页</a></span>
     </div>
 @show
 
