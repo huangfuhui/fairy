@@ -30,6 +30,9 @@
     </div>
 @show
 
+@section('menu')
+@show
+
 @yield('body')
 
 @section('foot')
