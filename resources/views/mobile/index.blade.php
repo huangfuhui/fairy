@@ -15,7 +15,7 @@
             @if($loop->index % 4 == 0 && $loop->index > 0)
                 <br/>
             @endif
-            <span><a href="{{ route('mobile_type', ['type' => $loop->index]) }}">{{ $type }}</a></span>
+            <span><a href="{{ route('mobile_type', ['type' => $loop->index + 1]) }}">{{ $type }}</a></span>
         @endforeach
     </div>
 @endsection
