@@ -30,6 +30,16 @@ trait ViewData
     }
 
     /**
+     * 设置分页数据
+     *
+     * @param array $data
+     */
+    public function setPage($data)
+    {
+        isset($data) ? $this->viewData['page_data'] = $data : null;
+    }
+
+    /**
      * 获取指定键的视图数据
      *
      * @param string $key
