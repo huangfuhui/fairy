@@ -26,4 +26,9 @@ class IndexLogic extends AbstractLogic
 
         return $bookType;
     }
+
+    public function recommend()
+    {
+        
+    }
 }

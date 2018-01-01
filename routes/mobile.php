@@ -7,4 +7,8 @@
  * Email: huangfuhui@outlook.com
  */
 
-Route::any('/mobile/index', 'IndexController@index')->name('mobile_index');
+Route::get('/mobile/error', 'ErrorController@error')->name('mobile_error');
+
+
+Route::get('/mobile/index', 'IndexController@index')->name('mobile_index');
+Route::get('/mobile/type', 'IndexController@type')->name('mobile_type');

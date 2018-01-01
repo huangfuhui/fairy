@@ -9,18 +9,20 @@
 
 namespace App\Models;
 
+use App\Constants\BookConstant;
 use App\Entities\Book;
 
 class BookModel
 {
     /**
      * 初始化书籍信息
+     *
      * @param string $name
-     * @param int $authorId
-     * @param int $typeId
+     * @param int    $authorId
+     * @param int    $typeId
      * @param string $profile
      * @param string $cover
-     * @param int $status
+     * @param int    $status
      * @return int
      */
     public static function initBook($name, $authorId, $typeId, $profile = '', $cover = '', $status = 0)
@@ -43,6 +45,7 @@ class BookModel
 
     /**
      * 查询书籍信息
+     *
      * @param $id
      * @return mixed
      */
@@ -53,12 +56,24 @@ class BookModel
 
     /**
      * 判断书籍是否存在
+     *
      * @param string $name
-     * @param int $authorId
+     * @param int    $authorId
      * @return bool
      */
     public static function existBook($name, $authorId)
     {
         return Book::where('name', $name)->where('author_id', $authorId)->exists();
+    }
+
+    /**
+     * 根据书籍类型查询书籍
+     *
+     * @param int $typeId
+     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
+     */
+    public static function getBookListByType($typeId)
+    {
+        return Book::where('type_id', $typeId)->orderBy('updated_at', 'desc')->paginate(BookConstant::PAGINATE);
     }
 }

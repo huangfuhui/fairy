@@ -11,6 +11,8 @@ namespace App\Constants;
 
 final class BookConstant
 {
+    const PAGINATE = 20;                        // 书籍列表分页，每页显示条数
+
     const SERIAL = 0;
     const END    = 1;
 
