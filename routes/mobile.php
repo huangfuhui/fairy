@@ -9,6 +9,7 @@
 
 Route::get('/mobile/error', 'ErrorController@error')->name('mobile_error');
 
-
 Route::get('/mobile/index', 'IndexController@index')->name('mobile_index');
 Route::get('/mobile/type', 'IndexController@type')->name('mobile_type');
+Route::get('/mobile/book', 'BookController@bookInfo')->name('mobile_book');
+Route::get('/mobile/content', 'BookController@content')->name('mobile_content');

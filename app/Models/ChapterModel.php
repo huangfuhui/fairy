@@ -9,6 +9,7 @@
 
 namespace App\Models;
 
+use App\Constants\BookConstant;
 use App\Entities\Chapter;
 
 class ChapterModel
@@ -23,6 +24,18 @@ class ChapterModel
     public static function initChapter($chapters = [])
     {
         return Chapter::insert($chapters);
+    }
+
+    /**
+     * 根据书籍ID获取章节列表
+     *
+     * @param int    $bookId
+     * @param string $sort
+     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
+     */
+    public static function getChapterList($bookId, $sort = 'desc')
+    {
+        return Chapter::where('book_id', $bookId)->orderBy('id', $sort)->paginate(BookConstant::PAGINATE);
     }
 
     /**

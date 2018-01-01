@@ -29,14 +29,14 @@
         <div class="book-list">
             @foreach($page_data['data'] as $book)
                 @if($loop->index % 2 == 0)
-                    <a class="book-href double-row" href="#">
+                    <a class="book-href double-row" href="{{ route('mobile_book', ['book_id' => $book['id']]) }}">
                         <span class="name">{{ $book['name'] }}</span>
                         <span class="author">{{ $book['author'] }}</span>
                         <span class="status">{{ $book['status'] }}</span>
                         <div class="float-clean"></div>
                     </a>
                 @else
-                    <a class="book-href single-row" href="#">
+                    <a class="book-href single-row" href="{{ route('mobile_book', ['book_id' => $book['id']]) }}">
                         <span class="name">{{ $book['name'] }}</span>
                         <span class="author">{{ $book['author'] }}</span>
                         <span class="status">{{ $book['status'] }}</span>

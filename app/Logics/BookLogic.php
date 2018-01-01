@@ -41,4 +41,21 @@ class BookLogic extends AbstractLogic
 
         return $bookList;
     }
+
+    /**
+     * 获取书籍信息
+     *
+     * @return mixed
+     */
+    public function bookInfo()
+    {
+        $bookId = $this->book_id;
+
+        $book = BookModel::getBook($bookId)->toArray();
+        if (empty($book)) {
+            $this->error('所搜书籍神游太虚了...');
+        }
+
+        return $book;
+    }
 }
