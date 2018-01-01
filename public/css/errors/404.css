@@ -1,0 +1,13 @@
+.err-msg {
+    border-radius: 3px;
+    border: solid 1px ghostwhite;
+    padding: 10px;
+    text-align: center;
+}
+
+.err-msg span {
+    color: #636b6f;
+    font-family: 'Raleway', sans-serif;
+    font-weight: 100;
+    font-size: 25px;
+}

@@ -60,4 +60,12 @@ class AbstractLogic
             $this->attributes[$key] = $value;
         }
     }
+
+    /**
+     * @param string $errMsg
+     */
+    public function error(string $errMsg = '')
+    {
+        abort(404, trim($errMsg));
+    }
 }
