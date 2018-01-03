@@ -52,6 +52,41 @@ class ChapterModel
     }
 
     /**
+     * 根据ID获取章节信息
+     *
+     * @param int $chapterId
+     * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model|null|static|static[]
+     */
+    public static function getById($chapterId)
+    {
+        return Chapter::find($chapterId);
+    }
+
+    /**
+     * 获取上一章节信息
+     *
+     * @param int $bookId
+     * @param int $chapterId
+     * @return \Illuminate\Database\Eloquent\Model|null|static
+     */
+    public static function getLastById($bookId, $chapterId)
+    {
+        return Chapter::where('id', '<', $chapterId)->where('book_id', $bookId)->orderBy('id', 'desc')->limit(1)->first();
+    }
+
+    /**
+     * 获取下一章节信息
+     *
+     * @param int $bookId
+     * @param int $chapterId
+     * @return \Illuminate\Database\Eloquent\Model|null|static
+     */
+    public static function getNextById($bookId, $chapterId)
+    {
+        return Chapter::where('id', '>', $chapterId)->where('book_id', $bookId)->orderBy('id', 'asc')->limit(1)->first();
+    }
+
+    /**
      * 删除书籍所有章节信息
      *
      * @param int $bookId

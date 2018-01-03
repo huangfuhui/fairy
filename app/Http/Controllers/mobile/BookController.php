@@ -12,9 +12,15 @@ namespace App\Http\Controllers\Mobile;
 use App\Http\Controllers\Controller;
 use App\Logics\BookLogic;
 use App\Logics\ChapterLogic;
+use App\Logics\ContentLogic;
 
 class BookController extends Controller
 {
+    /**
+     * 书籍信息
+     *
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function bookInfo()
     {
         $bookLogic = new BookLogic();
@@ -28,8 +34,25 @@ class BookController extends Controller
         return view('mobile.book', $this->viewData());
     }
 
+    /**
+     * 书籍章节内容
+     *
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function content()
     {
+        $bookLogic = new BookLogic();
+        $bookInfo  = $bookLogic->bookInfo();
+        $this->addData('book_info', $bookInfo);
+
+        $chapterLogic = new ChapterLogic();
+        $chapter      = $chapterLogic->chapterInfo();
+        $this->addData('chapter', $chapter);
+
+        $contentLogic = new ContentLogic();
+        $content      = $contentLogic->getContent();
+        $this->addData('content', $content);
+
         return view('mobile.content', $this->viewData());
     }
 }

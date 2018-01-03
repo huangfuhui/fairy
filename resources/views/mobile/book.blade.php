@@ -46,10 +46,10 @@
             @foreach($page_data['data'] as $chapter)
                 @if($loop->index %2 == 0)
                     <a class="chapter-href double-row"
-                       href="{{ route('mobile_content', ['content_id' => $chapter['content_id']]) }}">{{ $chapter['name'] }}</a>
+                       href="{{ route('mobile_content', ['book_id' => $book_info['id'], 'chapter_id' => $chapter['id'], 'content_id' => $chapter['content_id']]) }}">{{ $chapter['name'] }}</a>
                 @else
                     <a class="chapter-href single-row"
-                       href="{{ route('mobile_content', ['content_id' => $chapter['content_id']]) }}">{{ $chapter['name'] }}</a>
+                       href="{{ route('mobile_content', ['book_id' => $book_info['id'], 'chapter_id' => $chapter['id'],'content_id' => $chapter['content_id']]) }}">{{ $chapter['name'] }}</a>
                 @endif
             @endforeach
         </div>

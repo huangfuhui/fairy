@@ -35,4 +35,33 @@ class ChapterLogic extends AbstractLogic
 
         return $chapterList;
     }
+
+    /**
+     * 获取章节信息
+     *
+     * @return array
+     */
+    public function chapterInfo()
+    {
+        $bookId    = $this->book_id;
+        $chapterId = $this->chapter_id;
+
+        $lastChapter    = ChapterModel::getLastById($bookId, $chapterId);
+        $currentChapter = ChapterModel::getById($chapterId);
+        $nextChapter    = ChapterModel::getNextById($bookId, $chapterId);
+
+        empty($lastChapter) ? null : $lastChapter = $lastChapter->toArray();
+        if (empty($currentChapter)) {
+            $this->error('道友，当前章节已遗失多年.');
+        } else {
+            $currentChapter = $currentChapter->toArray();
+        }
+        empty($nextChapter) ? null : $nextChapter = $nextChapter->toArray();
+
+        return [
+            'last_chapter'    => $lastChapter,
+            'current_chapter' => $currentChapter,
+            'next_chapter'    => $nextChapter,
+        ];
+    }
 }

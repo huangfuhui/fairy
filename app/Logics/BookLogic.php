@@ -53,7 +53,7 @@ class BookLogic extends AbstractLogic
 
         $book = BookModel::getBook($bookId)->toArray();
         if (empty($book)) {
-            $this->error('所搜书籍神游太虚了...');
+            $this->error('所寻书籍神游太虚了...');
         }
 
         $book['author_name'] = AuthorModel::getAuthorName($book['author_id']);
