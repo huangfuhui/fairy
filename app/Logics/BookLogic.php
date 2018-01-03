@@ -56,6 +56,10 @@ class BookLogic extends AbstractLogic
             $this->error('所搜书籍神游太虚了...');
         }
 
+        $book['author_name'] = AuthorModel::getAuthorName($book['author_id']);
+        $book['status']      = BookConstant::BOOK_STATUS[$book['status']];
+        $book['type_name']   = BookTypeConstant::BOOK_TYPE[$book['type_id']];
+
         return $book;
     }
 }

@@ -22,9 +22,16 @@ class ChapterLogic extends AbstractLogic
     {
         $bookId = $this->book_id;
         $sort   = $this->sort;
-        empty($sort) ? $sort = 'desc' : null;
 
-        $chapterList = ChapterModel::getChapterList($bookId, $sort)->toArray();
+        // 默认降序获取书籍章节
+        if (!empty($sort) && $sort == 1) {
+            $order = 'asc';
+        } else {
+            $order = 'desc';
+        }
+
+        $chapterList = ChapterModel::getChapterList($bookId, $order)->toArray();
+        empty($sort) ? null : $chapterList['sort'] = $sort;
 
         return $chapterList;
     }
