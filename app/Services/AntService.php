@@ -378,7 +378,6 @@ class AntService
         foreach ($results[1] as $key => $value) {
             $authorId = AuthorModel::getAuthorId($results[3][$key]);
             if (empty($authorId) || !BookModel::existBook($results[2][$key], $authorId)) {
-                echo $results[2][$key] . '<br/>';
                 $this->initBook($value);
             }
         }
